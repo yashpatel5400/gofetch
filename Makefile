@@ -1,8 +1,8 @@
 all: player background
 	make player background
 
-player: player.go player_tests.go
-	go build player.go player_tests.go
+player: player.go player_tests.go background.go 
+	go build player.go player_tests.go background.go 
 
 enemy: enemy.go enemy_tests.go
 	go build enemy.go enemy_tests.go

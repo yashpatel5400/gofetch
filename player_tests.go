@@ -9,7 +9,10 @@ import(
 /* A successful output shows a red block for the user on screen              */
 /*****************************************************************************/
 func test_draw_player() {
-	return
+	bg   := initBackground()
+	play := initPlayer()
+	bg = drawPlayer(bg, play)
+	render(bg)
 }
 
 /*****************************************************************************/
@@ -17,7 +20,17 @@ func test_draw_player() {
 /* A successful output will show player jumping up or crouching down resp.   */
 /*****************************************************************************/
 func test_move_player() {
-	return
+	bg   := initBackground()
+	play := initPlayer()
+	play.jumpPoint = 30
+
+	TEST_STEPS := 30
+	for i := 0; i < TEST_STEPS; i++ {
+		insertOnBoard(bg, play.position, "sky") 
+		jumpPlayer(play)
+		bg = drawPlayer(bg, play)
+		render(bg)
+	}
 }
 
 /*****************************************************************************/
@@ -25,14 +38,29 @@ func test_move_player() {
 /* run ends. Successful output displays "Game Over" when user=enemy position */
 /*****************************************************************************/
 func test_kill_player() {
-	return
+	bg   := initBackground()
+	bg = insertEnemy(bg)
+	bg = insertEnemy(bg)
+	bg = insertEnemy(bg)
+	play := initPlayer()
+		
+	TEST_STEPS := 125
+	for i := 0; i < TEST_STEPS; i++ {
+		bg = moveBackground(bg)
+		if checkDead(bg, play) {
+			fmt.Println("Successfully died!")
+			return
+		}
+		bg = drawPlayer(bg, play)
+		render(bg)
+	}
 }
 
 /*****************************************************************************/
 /* Runs all the tests written above -- used only in production compiles      */
 /*****************************************************************************/
 func main() {
-	test_draw_player()
-	test_move_player()
+	// test_draw_player()
+	// test_move_player()
 	test_kill_player()
 }

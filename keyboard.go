@@ -44,8 +44,6 @@ func readKeys() {
 		case c = <-in: // blocks while waiting for input from goroutine
 			if c == 65 {
 				scr.Println("up")	
-			} else if c == 66 {
-				scr.Println("down")	
 			}
 			scr.Refresh()
 		case ready <- true: // sends once above block completes

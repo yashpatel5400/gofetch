@@ -126,11 +126,14 @@ func moveBackground(background *Background) *Background {
 		for x := 0; x < background.width; x++ {
 			// old part of background that's shifting/moving at set speed
 			if x < background.width - background.speed {
+				// these do not "move" with the rest of the background
 				if background.board[y][x] == SCORE {
 					continue
 				}
 
-				if background.board[y][x + background.speed] == SCORE {
+				if  background.board[y][x + background.speed] == SCORE || 
+					background.board[y][x + background.speed] == PLAYER {
+
 					background.board[y][x] = SKY
 				} else {
 					background.board[y][x] = background.board[y][x + background.speed]
