@@ -62,6 +62,9 @@ type Background struct {
 	gameover bool
 }
 
+/*****************************************************************************/
+/* Initializes the background struct object and returns a pointer to it      */
+/*****************************************************************************/
 func initBackground() *Background {
 	board := [][]int{}
 	for y := 0; y < HEIGHT; y++ {
@@ -88,6 +91,11 @@ func initBackground() *Background {
 	}
 }
 
+/*****************************************************************************/
+/* Given a background object, a valid box corresponding to a position on the */
+/* board, and a string of what the box corresponds to (i.e. "player" or      */
+/* "enemy"), returns background with object in position                      */
+/*****************************************************************************/
 func insertOnBoard(background *Background, box *BoundingBox, id string) *Background {
 	var identifier int
 	switch id {
@@ -114,6 +122,10 @@ func insertOnBoard(background *Background, box *BoundingBox, id string) *Backgro
 	return background
 } 
 
+/*****************************************************************************/
+/* Given the background, returns a new background where everything has been  */
+/* shifted according to the current speed (does not move the player)         */
+/*****************************************************************************/
 func moveBackground(background *Background) *Background {
 	for y := 0; y < background.height; y++ {
 		var DEFAULT int
@@ -147,6 +159,12 @@ func moveBackground(background *Background) *Background {
 	return background
 }
 
+/*****************************************************************************/
+/* Given the background, a bounding box that corresponds to the level (i.e a */
+/* region of the background where particular objects can spawn), the height  */
+/* and width of such objects, and the object type, randomly creates an       */
+/* of the specified type somewhere in the level and returns background w/ obj*/
+/*****************************************************************************/
 func insertObj(background *Background, level *BoundingBox, 
 	width int, height int, objType string) *Background {
 
@@ -160,18 +178,27 @@ func insertObj(background *Background, level *BoundingBox,
 	return insertOnBoard(background, objBlock, objType)
 }
 
+/*****************************************************************************/
+/* Given the background, return new background with cloud inserted (one)     */
+/*****************************************************************************/
 func insertCloud(background *Background) *Background {
 	CLOUD_WIDTH  := 5
 	CLOUD_HEIGHT := 3
 	return insertObj(background, CLOUD_LEVEL, CLOUD_WIDTH, CLOUD_HEIGHT, "cloud")
 }
 
+/*****************************************************************************/
+/* Given the background, return new background with enemy inserted (one)     */
+/*****************************************************************************/
 func insertEnemy(background *Background) *Background {
 	ENEMY_WIDTH := 3
 	ENEMY_HEIGHT := 3
 	return insertObj(background, ENEMY_LEVEL, ENEMY_WIDTH, ENEMY_HEIGHT, "enemy")
 }
 
+/*****************************************************************************/
+/* Given the background, outputs the drawing on command line/prompt being run*/
+/*****************************************************************************/
 func render(background *Background) {
 	var buffer bytes.Buffer
 	for y := background.height - 1; y >= 0; y-- {

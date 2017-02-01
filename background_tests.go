@@ -66,9 +66,9 @@ func test_display_score() {
 /* Runs all the tests written above -- used only in production compiles      */
 /*****************************************************************************/
 func main() {
-	// test_plain_background()
-	// test_cloud()
-	// test_enemy()
+	test_plain_background()
+	test_cloud()
+	test_enemy()
 	test_move_background()
-	// test_display_score()
+	test_display_score()
 }

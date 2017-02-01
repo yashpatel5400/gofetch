@@ -19,56 +19,40 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 
 	// continuously reads from stdin asynchronously
-    ch := make(chan []byte)
-    go func(ch chan []byte) {
+    go func() {
     	// disable input buffering
 		exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
 		// do not display entered characters on the screen
 		exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
-		// restore the echoing state when exiting
-		defer exec.Command("stty", "-F", "/dev/tty", "echo").Run()
 		for {
 			var b []byte = make([]byte, 1)
             os.Stdin.Read(b)
-		    ch <- b
+		    if !play.hasJumped && b[0] == 65 {	
+            	play.hasJumped = true
+				play.jumpPoint = 20
+            }
         }
-        close(ch)
-    }(ch)
+    }()
 
     // Infinite game loop -- updates the screen and reads user input
-stdinloop:
-    for {
-        select {
-        // Has input: change user state to reflect the jump
-        case stdin, ok := <-ch:
-            if !ok {
-                break stdinloop
-            } else {
-            	newChar := stdin[0]
-            	if !play.hasJumped && newChar == 65 {	
-            		play.hasJumped = true
-					play.jumpPoint = 20
-            	}
-            }
+	for {
+        seedDecision := rand.Intn(MAKE_RANGE)
+		if seedDecision == MAKE_ENEMY {
+			bg = insertEnemy(bg)	
+		} else if seedDecision == MAKE_CLOUD {
+			bg = insertCloud(bg)	
+		} 
 
-        // No input: just render and update the scene
-        case <-time.After(250 * time.Millisecond):
-        	seedDecision := rand.Intn(MAKE_RANGE)
-			if seedDecision == MAKE_ENEMY {
-				bg = insertEnemy(bg)	
-			} else if seedDecision == MAKE_CLOUD {
-				bg = insertCloud(bg)	
-			} 
+		bg = moveBackground(bg)
+		if checkDead(bg, play) {
+			fmt.Println("Game over!! You scored: ", bg.score)
+			exec.Command("stty", "-F", "/dev/tty", "echo").Run()
+			return
+		}
 
-			bg = moveBackground(bg)
-			if checkDead(bg, play) {
-				fmt.Println("Game over!! You scored: ", bg.score)
-				return
-			}
-
-			play = jumpPlayer(play)
-			bg = drawPlayer(bg, play)
-			render(bg)
-        }
+		play = jumpPlayer(play)
+		bg = drawPlayer(bg, play)
+		render(bg)
+		time.Sleep(100 * time.Millisecond)
     }
 }

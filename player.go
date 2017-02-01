@@ -17,6 +17,9 @@ type Player struct {
 	jumpPoint int
 }
 
+/*****************************************************************************/
+/* Creates new player and returns a pointer to it                            */
+/*****************************************************************************/
 func initPlayer() *Player {
 	return &Player{
 		position: &BoundingBox{bottom:GROUND_LEVEL.top, 
@@ -27,10 +30,18 @@ func initPlayer() *Player {
 		jumpPoint: 0}
 }
 
+/*****************************************************************************/
+/* Given the player and background on which being played, draws according to */
+/* the player's current position.                                            */
+/*****************************************************************************/
 func drawPlayer(background *Background, player *Player) *Background {
 	return insertOnBoard(background, player.position, "player")
 }
 
+/*****************************************************************************/
+/* Given a player, checks whether it is in "jump status" and changes position*/
+/* accordingly if so. Returns the new player w/ updated position             */
+/*****************************************************************************/
 func jumpPlayer(player *Player) *Player {
 	DOWNWARD_PHASE := []int{1, 10}
 	UPWARD_PHASE   := []int{11, 20}
@@ -50,6 +61,9 @@ func jumpPlayer(player *Player) *Player {
 	return player
 }
 
+/*****************************************************************************/
+/* Given background and player, checks whether player has died (w/ enemy)    */
+/*****************************************************************************/
 func checkDead(background *Background, player *Player) bool {
 	for y := player.position.bottom; y < player.position.top; y++ {
 		for x := player.position.left; x < player.position.right; x++ {
