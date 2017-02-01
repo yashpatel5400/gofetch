@@ -64,8 +64,8 @@ func test_resize() {
 /*****************************************************************************/
 func main() {
 	test_plain_background()
-	// test_populated_background()
-	// test_move_background()
+	test_populated_background()
+	test_move_background()
 	// test_display_score()
 	// test_resize()
 }

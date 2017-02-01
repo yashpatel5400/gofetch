@@ -15,6 +15,7 @@ var GROUND = 1
 var CLOUD  = 2
 var PLAYER = 3
 var ENEMY  = 4
+var SCORE  = 5
 
 // variables for adjusting window size
 var WIDTH  = 100
@@ -29,7 +30,7 @@ var HEIGHT = 30
 // -------------------------------
 // ---------     GROUND      -----
 // -------------------------------
-var SCORE_BOX    = &BoundingBox{bottom:25, top:35, left:5, right:6}
+var SCORE_BOX    = &BoundingBox{bottom:25, top:26, left:5, right:6}
 var GROUND_LEVEL = &BoundingBox{bottom:0,  top:10, left:0, right:WIDTH}
 var CLOUD_LEVEL  = &BoundingBox{bottom:20, top:30, left:0, right:WIDTH}
 
@@ -61,21 +62,17 @@ type Background struct {
 	gameover bool
 }
 
-func inside(x int, y int, box *BoundingBox) bool {
-	return (x >= box.left && x < box.right &&
-			y >= box.bottom && y < box.top)
-}
-
 func initBackground() *Background {
 	board := [][]int{}
-
-	for i := 0; i < HEIGHT; i++ {
+	for y := 0; y < HEIGHT; y++ {
 		row := make([]int, WIDTH)
-		if i >= GROUND_LEVEL.bottom && i < GROUND_LEVEL.top {
-			for j := 0; j < WIDTH; j++ {
-				row[j] = GROUND
+		if y >= GROUND_LEVEL.bottom && y < GROUND_LEVEL.top {
+			for x := 0; x < WIDTH; x++ {
+				row[x] = GROUND
 			}
-		}
+		} else if y >= SCORE_BOX.bottom && y < SCORE_BOX.top {
+			row[SCORE_BOX.left] = SCORE
+		} 
 
 		board = append(board, row)
 	}
@@ -109,7 +106,7 @@ func insertOnBoard(background *Background, box *BoundingBox, id string) *Backgro
 		return background
 	}
 
-	for y := box.top; y < box.bottom; y++ {
+	for y := box.bottom; y < box.top; y++ {
 		for x := box.left; x < box.right; x++ {
 			background.board[y][x] = identifier
 		}
@@ -129,7 +126,15 @@ func moveBackground(background *Background) *Background {
 		for x := 0; x < background.width; x++ {
 			// old part of background that's shifting/moving at set speed
 			if x < background.width - background.speed {
-				background.board[y][x] = background.board[y][x + background.speed]
+				if background.board[y][x] == SCORE {
+					continue
+				}
+
+				if background.board[y][x + background.speed] == SCORE {
+					background.board[y][x] = SKY
+				} else {
+					background.board[y][x] = background.board[y][x + background.speed]
+				}
 			} else { // new background being generated to replace the old background
 				background.board[y][x] = DEFAULT
 			}			
@@ -139,13 +144,16 @@ func moveBackground(background *Background) *Background {
 }
 
 func insertCloud(background *Background) *Background {
+	CLOUD_WIDTH  := 5
+	CLOUD_HEIGHT := 3
+
 	CLOUD_RANGE := CLOUD_LEVEL.top - CLOUD_LEVEL.bottom
 	rand.Seed(time.Now().UnixNano())
 	randLocation := rand.Intn(CLOUD_RANGE)
 	cloudY       := CLOUD_LEVEL.bottom + randLocation
 	cloudBlock   := &BoundingBox{
-		left: background.width-2, right: background.width-1, 
-		bottom: cloudY-1, top: cloudY}
+		left: background.width-CLOUD_WIDTH, right: background.width-1, 
+		bottom: cloudY-CLOUD_HEIGHT, top: cloudY}
 	return insertOnBoard(background, cloudBlock, "cloud")
 }
 
@@ -165,7 +173,7 @@ func render(background *Background) {
 			} else if curPixel == ENEMY {
 				buffer.Write(as.Bytes(ansi.Color("█", ansi.Red)))
 			} else {
-				buffer.Write(as.Bytes(curPixel))
+				buffer.Write(as.Bytes(background.score))
 			}
 		}
 		buffer.WriteByte('\n')
