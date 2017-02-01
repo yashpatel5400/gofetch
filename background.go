@@ -140,6 +140,7 @@ func moveBackground(background *Background) *Background {
 			}			
 		}
 	}
+	background.score += background.speed
 	return background
 }
 
