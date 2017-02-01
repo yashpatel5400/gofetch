@@ -10,7 +10,7 @@ import (
 
 func main() {
 	// sets up variables for the game run -- constants, background, player
-	MAKE_RANGE := 100
+	MAKE_RANGE := 25
 	MAKE_ENEMY := 0
 	MAKE_CLOUD := 1
 
@@ -46,9 +46,8 @@ stdinloop:
             } else {
             	newChar := stdin[0]
             	if !play.hasJumped && newChar == 65 {	
-            		fmt.Println("Jumped!")
             		play.hasJumped = true
-					play.jumpPoint = 10
+					play.jumpPoint = 20
             	}
             }
 

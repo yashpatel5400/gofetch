@@ -32,8 +32,8 @@ func drawPlayer(background *Background, player *Player) *Background {
 }
 
 func jumpPlayer(player *Player) *Player {
-	DOWNWARD_PHASE := []int{1, 15}
-	UPWARD_PHASE   := []int{16, 30}
+	DOWNWARD_PHASE := []int{1, 10}
+	UPWARD_PHASE   := []int{11, 20}
 	
 	curJump := player.jumpPoint
 	if curJump > 0 {

@@ -24,12 +24,12 @@ var HEIGHT = 30
 // global variables used for background "sections" -- marks height btween which
 // certain background characteristics occur
 // -------------------------------
-// | Score |                 -----
 // ------     ENEMY/CLOUD    -----
 // -------------------------------
 // ---------     GROUND      -----
+// | Score |                 -----
 // -------------------------------
-var SCORE_BOX    = &BoundingBox{bottom:25, top:26, left:5, right:6}
+var SCORE_BOX    = &BoundingBox{bottom:5, top:6, left:5, right:6}
 var GROUND_LEVEL = &BoundingBox{bottom:0,  top:10, left:0, right:WIDTH}
 var CLOUD_LEVEL  = &BoundingBox{bottom:20, top:30, left:0, right:WIDTH}
 var ENEMY_LEVEL  = &BoundingBox{bottom:13, top:30, left:0, right:WIDTH}
@@ -82,7 +82,7 @@ func initBackground() *Background {
 		height: HEIGHT,
 		board:  board,
 
-		speed: 1,
+		speed: 2,
 		score: 0,
 		gameover: false,	
 	}
