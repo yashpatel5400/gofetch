@@ -1,5 +1,6 @@
 # gofetch
 <img src="https://media.giphy.com/media/l0ExjlOOFWFhJwHPa/source.gif" width="600" height="400" />
+
 An infinite-runner command line game in Go language. Intended to be run on *nix machines. 
 
 ## Usage
