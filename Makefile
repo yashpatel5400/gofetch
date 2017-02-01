@@ -14,4 +14,4 @@ keyboard: keyboard.go keyboard_tests.go
 	go build keyboard.go keyboard_tests.go
 
 clean:
-	rm player background
+	rm player enemy background keyboard

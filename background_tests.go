@@ -9,11 +9,9 @@ import (
 /* A successful output is a green/blue scene for the grass and sky           */
 /*****************************************************************************/
 func test_plain_background() {
-	SEPARATOR := "======================================="
 	fmt.Println("Testing the plain background...")
 	bg := initBackground()
 	render(bg)
-	fmt.Println(SEPARATOR)
 }
 
 /*****************************************************************************/
@@ -21,7 +19,12 @@ func test_plain_background() {
 /* A successful output will have these and them changing each run            */
 /*****************************************************************************/
 func test_populated_background() {
-	return
+	fmt.Println("Testing the clouded background...")
+	bg := initBackground()
+	bg =  insertCloud(bg)
+	render(bg)
+	bg =  insertCloud(bg)
+	render(bg)
 }
 
 /*****************************************************************************/
@@ -29,7 +32,15 @@ func test_populated_background() {
 /* A successful output will make the user feel as though he/she is moving    */
 /*****************************************************************************/
 func test_move_background() {
-	return
+	fmt.Println("Testing the moving background...")
+	bg := initBackground()
+	bg =  insertCloud(bg)
+	
+	TEST_STEPS := 10
+	for i := 0; i < TEST_STEPS; i++ {
+		bg =  moveBackground(bg)
+		render(bg)	
+	}
 }
 
 /*****************************************************************************/
@@ -53,8 +64,8 @@ func test_resize() {
 /*****************************************************************************/
 func main() {
 	test_plain_background()
-	test_populated_background()
-	test_move_background()
-	test_display_score()
-	test_resize()
+	// test_populated_background()
+	// test_move_background()
+	// test_display_score()
+	// test_resize()
 }

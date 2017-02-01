@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"bytes"
+	"time"
+	"math/rand"
 	"github.com/SimonWaldherr/golibs/ansi"
 	"github.com/SimonWaldherr/golibs/as"
 )
@@ -20,14 +22,24 @@ var HEIGHT = 30
 
 // global variables used for background "sections" -- marks height btween which
 // certain background characteristics occur
-// ---------------------------
-// -----       SKY       -----
-// -----      CLOUD      -----
-// ---------------------------
-// -----     GROUND      -----
-// ---------------------------
-var CLOUD_LEVEL  = []int{20,30}
-var GROUND_LEVEL = []int{0,10}
+// -------------------------------
+// | Score |                 -----
+// ---------       SKY       -----
+// ---------      CLOUD      -----
+// -------------------------------
+// ---------     GROUND      -----
+// -------------------------------
+var SCORE_BOX    = &BoundingBox{bottom:25, top:35, left:5, right:6}
+var GROUND_LEVEL = &BoundingBox{bottom:0,  top:10, left:0, right:WIDTH}
+var CLOUD_LEVEL  = &BoundingBox{bottom:20, top:30, left:0, right:WIDTH}
+
+// object used to represent the boundaries of where object is/can be
+type BoundingBox struct {
+	top int
+	bottom int
+	right int
+	left int
+}
 
 // object containing the background of the game -- also contains
 // variables about what is in each position on the board
@@ -49,16 +61,22 @@ type Background struct {
 	gameover bool
 }
 
+func inside(x int, y int, box *BoundingBox) bool {
+	return (x >= box.left && x < box.right &&
+			y >= box.bottom && y < box.top)
+}
+
 func initBackground() *Background {
 	board := [][]int{}
 
 	for i := 0; i < HEIGHT; i++ {
 		row := make([]int, WIDTH)
-		if i >= GROUND_LEVEL[0] && i < GROUND_LEVEL[1] {
+		if i >= GROUND_LEVEL.bottom && i < GROUND_LEVEL.top {
 			for j := 0; j < WIDTH; j++ {
 				row[j] = GROUND
 			}
-		} 
+		}
+
 		board = append(board, row)
 	}
 
@@ -73,12 +91,12 @@ func initBackground() *Background {
 	}
 }
 
-func insertOnBoard(background *Background, positions [][]int, id string) *Background {
+func insertOnBoard(background *Background, box *BoundingBox, id string) *Background {
 	var identifier int
 	switch id {
 	case "sky":
 		identifier = SKY
-	case "tree":
+	case "ground":
 		identifier = GROUND
 	case "cloud":
 		identifier = CLOUD
@@ -91,52 +109,64 @@ func insertOnBoard(background *Background, positions [][]int, id string) *Backgr
 		return background
 	}
 
-	PAIR_SIZE := 2
-	for i := 0; i < len(positions); i++ {
-		curPosition := positions[i]
-		if len(curPosition) != PAIR_SIZE {
-			fmt.Println("Attempting to insert non-pair formatted position!!")
-			return background
+	for y := box.top; y < box.bottom; y++ {
+		for x := box.left; x < box.right; x++ {
+			background.board[y][x] = identifier
 		}
-
-		background.board[curPosition[0]][curPosition[1]] = identifier
 	}
 	return background
 } 
 
-func moveBackground(background *Background) {
+func moveBackground(background *Background) *Background {
 	for y := 0; y < background.height; y++ {
-		// old part of background that's shifting/moving at set speed
-		for x := 0; x < background.width - background.speed; x++ {
-			background.board[x][y] = background.board[x + background.speed][y]
+		var DEFAULT int
+		if y >= GROUND_LEVEL.bottom && y < GROUND_LEVEL.top {
+			DEFAULT = GROUND
+		} else {
+			DEFAULT = SKY
 		}
 
-		// new background being generated to replace the old background
-		for x := background.width - background.speed; x < background.width; x++ {
-			background.board[x][y] = SKY
+		for x := 0; x < background.width; x++ {
+			// old part of background that's shifting/moving at set speed
+			if x < background.width - background.speed {
+				background.board[y][x] = background.board[y][x + background.speed]
+			} else { // new background being generated to replace the old background
+				background.board[y][x] = DEFAULT
+			}			
 		}
 	}
+	return background
 }
 
-func insertClouds(background *Background) {
-	return
+func insertCloud(background *Background) *Background {
+	CLOUD_RANGE := CLOUD_LEVEL.top - CLOUD_LEVEL.bottom
+	rand.Seed(time.Now().UnixNano())
+	randLocation := rand.Intn(CLOUD_RANGE)
+	cloudY       := CLOUD_LEVEL.bottom + randLocation
+	cloudBlock   := &BoundingBox{
+		left: background.width-2, right: background.width-1, 
+		bottom: cloudY-1, top: cloudY}
+	return insertOnBoard(background, cloudBlock, "cloud")
 }
 
 func render(background *Background) {
 	var buffer bytes.Buffer
 	for y := background.height - 1; y >= 0; y-- {
 		for x := 0; x < background.width; x++ {
-			if background.board[y][x] == SKY {
+			curPixel := background.board[y][x]
+			if curPixel == SKY {
 				buffer.Write(as.Bytes(ansi.Color("█", ansi.Blue)))
-			} else if background.board[y][x] == GROUND {
+			} else if curPixel == GROUND {
 				buffer.Write(as.Bytes(ansi.Color("█", ansi.Green)))
-			} else if background.board[y][x] == CLOUD {
+			} else if curPixel == CLOUD {
 				buffer.Write(as.Bytes(ansi.Color("█", ansi.White)))
-			} else if background.board[y][x] == PLAYER {
-				buffer.Write(as.Bytes(ansi.Color("█", ansi.Blue)))
-			} else if background.board[y][x] == ENEMY {
+			} else if curPixel == PLAYER {
+				buffer.Write(as.Bytes(ansi.Color("█", ansi.Yellow)))
+			} else if curPixel == ENEMY {
 				buffer.Write(as.Bytes(ansi.Color("█", ansi.Red)))
-			} 
+			} else {
+				buffer.Write(as.Bytes(curPixel))
+			}
 		}
 		buffer.WriteByte('\n')
 	}
