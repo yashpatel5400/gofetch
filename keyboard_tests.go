@@ -9,20 +9,18 @@ import (
 /* Successful run will show that the up/down keys are properly being read in */
 /*****************************************************************************/
 func test_arrows() {
-	return
-}
-
-/*****************************************************************************/
-/* Checks to ensure that no other keys are registered by our keyboard obj    */
-/*****************************************************************************/
-func test_others() {
-	return
+	keyboard := initKeys()
+	for {
+		keyboard = readKeys(keyboard)
+		// fmt.Println(keyboard.upPushed)
+		// fmt.Println(keyboard.downPushed)
+	}
 }
 
 /*****************************************************************************/
 /* Runs all the tests written above -- used only in production compiles      */
 /*****************************************************************************/
 func main() {
+	fmt.Println("Testing keyboard...")
 	test_arrows()
-	test_others()
 }
