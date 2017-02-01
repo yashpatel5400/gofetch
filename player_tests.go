@@ -27,8 +27,8 @@ func test_move_player() {
 	TEST_STEPS := 30
 	for i := 0; i < TEST_STEPS; i++ {
 		insertOnBoard(bg, play.position, "sky") 
-		jumpPlayer(play)
-		bg = drawPlayer(bg, play)
+		play = jumpPlayer(play)
+		bg   = drawPlayer(bg, play)
 		render(bg)
 	}
 }
@@ -38,7 +38,7 @@ func test_move_player() {
 /* run ends. Successful output displays "Game Over" when user=enemy position */
 /*****************************************************************************/
 func test_kill_player() {
-	bg   := initBackground()
+	bg := initBackground()
 	bg = insertEnemy(bg)
 	bg = insertEnemy(bg)
 	bg = insertEnemy(bg)

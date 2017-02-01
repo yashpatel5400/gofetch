@@ -44,6 +44,8 @@ func jumpPlayer(player *Player) *Player {
 		}
 		player.position.top = player.position.bottom + PLAYER_HEIGHT
 		player.jumpPoint -= 1
+	} else {
+		player.hasJumped = false
 	}
 	return player
 }
