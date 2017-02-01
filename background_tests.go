@@ -9,7 +9,11 @@ import (
 /* A successful output is a green/blue scene for the grass and sky           */
 /*****************************************************************************/
 func test_plain_background() {
-	return
+	SEPARATOR := "======================================="
+	fmt.Println("Testing the plain background...")
+	bg := initBackground()
+	render(bg)
+	fmt.Println(SEPARATOR)
 }
 
 /*****************************************************************************/
@@ -51,6 +55,6 @@ func main() {
 	test_plain_background()
 	test_populated_background()
 	test_move_background()
-	test_display_background()
+	test_display_score()
 	test_resize()
 }

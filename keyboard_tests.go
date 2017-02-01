@@ -9,12 +9,10 @@ import (
 /* Successful run will show that the up/down keys are properly being read in */
 /*****************************************************************************/
 func test_arrows() {
-	keyboard := initKeys()
-	for {
-		keyboard = readKeys(keyboard)
-		// fmt.Println(keyboard.upPushed)
-		// fmt.Println(keyboard.downPushed)
-	}
+	SEPARATOR := "======================================="
+	fmt.Println("Check if up/down are read properly")
+	readKeys()
+	fmt.Println(SEPARATOR)
 }
 
 /*****************************************************************************/
