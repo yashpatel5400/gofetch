@@ -25,14 +25,14 @@ var HEIGHT = 30
 // certain background characteristics occur
 // -------------------------------
 // | Score |                 -----
-// ---------       SKY       -----
-// ---------      CLOUD      -----
+// ------     ENEMY/CLOUD    -----
 // -------------------------------
 // ---------     GROUND      -----
 // -------------------------------
 var SCORE_BOX    = &BoundingBox{bottom:25, top:26, left:5, right:6}
 var GROUND_LEVEL = &BoundingBox{bottom:0,  top:10, left:0, right:WIDTH}
 var CLOUD_LEVEL  = &BoundingBox{bottom:20, top:30, left:0, right:WIDTH}
+var ENEMY_LEVEL  = &BoundingBox{bottom:13, top:30, left:0, right:WIDTH}
 
 // object used to represent the boundaries of where object is/can be
 type BoundingBox struct {
@@ -143,18 +143,29 @@ func moveBackground(background *Background) *Background {
 	return background
 }
 
+func insertObj(background *Background, level *BoundingBox, 
+	width int, height int, objType string) *Background {
+
+	levelRange := level.top - level.bottom
+	rand.Seed(time.Now().UnixNano())
+	randLocation := rand.Intn(levelRange)
+	objY       := level.bottom + randLocation
+	objBlock   := &BoundingBox{
+		left: background.width-width, right: background.width-1, 
+		bottom: objY-height, top: objY}
+	return insertOnBoard(background, objBlock, objType)
+}
+
 func insertCloud(background *Background) *Background {
 	CLOUD_WIDTH  := 5
 	CLOUD_HEIGHT := 3
+	return insertObj(background, CLOUD_LEVEL, CLOUD_WIDTH, CLOUD_HEIGHT, "cloud")
+}
 
-	CLOUD_RANGE := CLOUD_LEVEL.top - CLOUD_LEVEL.bottom
-	rand.Seed(time.Now().UnixNano())
-	randLocation := rand.Intn(CLOUD_RANGE)
-	cloudY       := CLOUD_LEVEL.bottom + randLocation
-	cloudBlock   := &BoundingBox{
-		left: background.width-CLOUD_WIDTH, right: background.width-1, 
-		bottom: cloudY-CLOUD_HEIGHT, top: cloudY}
-	return insertOnBoard(background, cloudBlock, "cloud")
+func insertEnemy(background *Background) *Background {
+	ENEMY_WIDTH := 3
+	ENEMY_HEIGHT := 3
+	return insertObj(background, ENEMY_LEVEL, ENEMY_WIDTH, ENEMY_HEIGHT, "enemy")
 }
 
 func render(background *Background) {

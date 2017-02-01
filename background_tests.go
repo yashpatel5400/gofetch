@@ -15,15 +15,24 @@ func test_plain_background() {
 }
 
 /*****************************************************************************/
-/* Should produce a populated background, i.e. with random clouds and trees. */
+/* Should generate a random cloud on the scene in the appropriate range      */
 /* A successful output will have these and them changing each run            */
 /*****************************************************************************/
-func test_populated_background() {
+func test_cloud() {
 	fmt.Println("Testing the clouded background...")
 	bg := initBackground()
 	bg =  insertCloud(bg)
 	render(bg)
-	bg =  insertCloud(bg)
+}
+
+/*****************************************************************************/
+/* Should generate a random enemy on the scene in the appropriate range      */
+/* A successful output will have these and them changing each run            */
+/*****************************************************************************/
+func test_enemy() {
+	fmt.Println("Testing the clouded background...")
+	bg := initBackground()
+	bg =  insertEnemy(bg)
 	render(bg)
 }
 
@@ -34,9 +43,9 @@ func test_populated_background() {
 func test_move_background() {
 	fmt.Println("Testing the moving background...")
 	bg := initBackground()
-	bg =  insertCloud(bg)
+	bg =  insertEnemy(bg)
 	
-	TEST_STEPS := 10
+	TEST_STEPS := 100
 	for i := 0; i < TEST_STEPS; i++ {
 		bg =  moveBackground(bg)
 		render(bg)	
@@ -48,24 +57,18 @@ func test_move_background() {
 /* run. A successful output will display this score in the top-right (fixed) */
 /*****************************************************************************/
 func test_display_score() {
-	return
-}
-
-/*****************************************************************************/
-/* Display the same scene when the terminal has been resized. A successful   */
-/* output produces the same ratio/feel after a resizing is completed         */
-/*****************************************************************************/
-func test_resize() {
-	return
+	fmt.Println("Testing the score display background (top-left)...")
+	bg := initBackground()
+	render(bg)
 }
 
 /*****************************************************************************/
 /* Runs all the tests written above -- used only in production compiles      */
 /*****************************************************************************/
 func main() {
-	test_plain_background()
-	test_populated_background()
+	// test_plain_background()
+	// test_cloud()
+	// test_enemy()
 	test_move_background()
 	// test_display_score()
-	// test_resize()
 }
